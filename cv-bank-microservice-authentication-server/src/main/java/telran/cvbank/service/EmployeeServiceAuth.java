@@ -7,5 +7,5 @@ public interface EmployeeServiceAuth {
 	
 	InfoEmployeeDto registerEmployee(RegisterEmployeeDto newEmployee);
 	
-	InfoEmployeeDto getEmployee(String id);
+	InfoEmployeeDto getEmployee(String id, String password);
 }
