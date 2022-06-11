@@ -1,21 +1,17 @@
 package telran.cvbank.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import telran.cvbank.dto.InfoEmployeeDto;
-import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
 import telran.cvbank.service.EmployeeAccountService;
 
@@ -29,16 +25,6 @@ public class EmployeeController {
 	@Autowired
 	public EmployeeController(EmployeeAccountService employeeAccountService) {
 		this.employeeAccountService = employeeAccountService;
-	}
-
-	@PostMapping("/signup")
-	public InfoEmployeeDto registerEmployee(@RequestBody RegisterEmployeeDto newEmployee) {
-		return employeeAccountService.registerEmployee(newEmployee);
-	}
-
-	@PostMapping("/signin")
-	public InfoEmployeeDto loginEmployee(Authentication authentication) {
-		return employeeAccountService.getEmployee(authentication.getName());
 	}
 
 	@PutMapping("/{id}")
@@ -55,14 +41,19 @@ public class EmployeeController {
 	public InfoEmployeeDto findEmployee(@PathVariable String id) {
 		return employeeAccountService.getEmployee(id);
 	}
-
-	@PutMapping("/login")
-	public InfoEmployeeDto updateLogin(Authentication authentication, @RequestHeader("X-Login") String newLogin) {
-		return employeeAccountService.changeEmployeeLogin(authentication.getName(), newLogin);
+	
+	@GetMapping("/hello")
+	public String helloMethod() {
+		return "hello";
 	}
 
-	@PutMapping("/pass")
-	public void updatePassword(Authentication authentication, @RequestHeader("X-Password") String newPassword) {
-		employeeAccountService.changeEmployeePassword(authentication.getName(), newPassword);
-	}
+//	@PutMapping("/login")
+//	public InfoEmployeeDto updateLogin(Authentication authentication, @RequestHeader("X-Login") String newLogin) {
+//		return employeeAccountService.changeEmployeeLogin(authentication.getName(), newLogin);
+//	}
+//
+//	@PutMapping("/pass")
+//	public void updatePassword(Authentication authentication, @RequestHeader("X-Password") String newPassword) {
+//		employeeAccountService.changeEmployeePassword(authentication.getName(), newPassword);
+//	}
 }

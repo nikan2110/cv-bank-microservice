@@ -38,7 +38,7 @@ public class EmployeeServiceAuthImpl implements EmployeeServiceAuth {
 		Employee employee = modelMapper.map(newEmployee, Employee.class);
 		String password = passwordEncoder.encode(newEmployee.getPassword());
 		employee.setPassword(password);
-		employee.getRoles().add("USER");
+		employee.getRoles().add("EMPLOYEE");
 		employeeRepo.save(employee);
 		return modelMapper.map(employee, InfoEmployeeDto.class);
 	}

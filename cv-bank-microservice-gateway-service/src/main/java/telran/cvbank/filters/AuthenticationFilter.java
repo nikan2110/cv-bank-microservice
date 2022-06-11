@@ -1,22 +1,22 @@
 package telran.cvbank.filters;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
 import io.jsonwebtoken.Claims;
 import reactor.core.publisher.Mono;
 import telran.cvbank.configuration.RouterValidator;
+import telran.cvbank.exceptions.AuthorizationHeaderIsInvalidException;
+import telran.cvbank.exceptions.AuthorizationHeaderIsMissingException;
 import telran.cvbank.jwt.JwtUtil;
 
-@RefreshScope
 @Component
+@Order(1)
 public class AuthenticationFilter implements GatewayFilter {
 
 	JwtUtil jwtUtil;
@@ -30,25 +30,21 @@ public class AuthenticationFilter implements GatewayFilter {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		System.out.println("Filter auth started");
 		ServerHttpRequest request = exchange.getRequest();
 		if (routerValidator.isSecured.test(request)) {
-			if (this.isAuthMissing(request)) {
-				return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+			if (isAuthMissing(request)) {
+				throw new AuthorizationHeaderIsMissingException("Authorization header is missing in request");
 			}
-			final String token = this.getAuthHeader(request);
+			final String token = getAuthHeader(request);
+			System.out.println("AuthFilter: {} " + token);
 
 			if (jwtUtil.isInvavlid(token)) {
-				return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+				throw new AuthorizationHeaderIsInvalidException("Authorization header is missing in request");
 			}
-			this.populateRequestWithHeaders(exchange, token);
+			populateRequestWithHeaders(exchange, token);
 		}
 		return chain.filter(exchange);
-	}
-
-	private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
-		ServerHttpResponse response = exchange.getResponse();
-		response.setStatusCode(httpStatus);
-		return response.setComplete();
 	}
 
 	private String getAuthHeader(ServerHttpRequest request) {

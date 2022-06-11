@@ -7,15 +7,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import telran.cvbank.filters.AuthenticationFilter;
+import telran.cvbank.filters.OwnerFilter;
 
 @Configuration
 public class GateWayConfig {
 	
 	AuthenticationFilter filter;
+	OwnerFilter ownerFilter;
 
 	@Autowired
-	public GateWayConfig(AuthenticationFilter filter) {
+	public GateWayConfig(AuthenticationFilter filter, OwnerFilter ownerFilter) {
 		this.filter = filter;
+		this.ownerFilter = ownerFilter;
 	}
 	
 	@Bean
@@ -24,6 +27,9 @@ public class GateWayConfig {
 				.route("cv-bank-microservice-authentication-server", route -> route.path("/cvbank/auth/**")
 				.filters(f -> f.filter(filter))
 				.uri("lb://cv-bank-microservice-authentication-server"))
+				.route("cv-bank-microservice-employee-service", route -> route.path("/cvbank/employee/{id}")
+				.filters(f -> f.filter(filter).filter(ownerFilter))
+				.uri("lb://cv-bank-microservice-employee-service"))
 				.build();
 	}
 	
