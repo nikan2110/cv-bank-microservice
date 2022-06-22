@@ -3,7 +3,7 @@ package telran.cvbank.service;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.RegisterEmployeeDto;
 
-public interface EmployeeServiceAuth {
+public interface AuthService {
 	
 	InfoEmployeeDto registerEmployee(RegisterEmployeeDto newEmployee);
 	

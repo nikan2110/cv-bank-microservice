@@ -1,6 +1,8 @@
 package telran.cvbank.service;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,14 +17,16 @@ import telran.cvbank.exceptions.WrongCredentialException;
 import telran.cvbank.model.Employee;
 
 @Service
-public class EmployeeServiceAuthImpl implements EmployeeServiceAuth {
+public class AuthServiceImpl implements AuthService {
+	
+	static Logger LOG = LoggerFactory.getLogger(AuthServiceImpl.class);
 
 	EmployeeMongoRepository employeeRepo;
 	ModelMapper modelMapper;
 	PasswordEncoder passwordEncoder;
 
 	@Autowired
-	public EmployeeServiceAuthImpl(EmployeeMongoRepository employeeRepo, ModelMapper modelMapper,
+	public AuthServiceImpl(EmployeeMongoRepository employeeRepo, ModelMapper modelMapper,
 			PasswordEncoder passwordEncoder) {
 		this.employeeRepo = employeeRepo;
 		this.modelMapper = modelMapper;
@@ -31,24 +35,30 @@ public class EmployeeServiceAuthImpl implements EmployeeServiceAuth {
 
 	@Override
 	public InfoEmployeeDto registerEmployee(RegisterEmployeeDto newEmployee) {
-		employeeRepo.deleteById(newEmployee.getEmail());
+		LOG.trace("received employee id {} for register", newEmployee.getEmail());
 		if (employeeRepo.existsById(newEmployee.getEmail())) {
-			throw new EmployeeAlreadyExistException();
+			LOG.error("employee with id {} not found", newEmployee.getEmail());
+			throw new EmployeeAlreadyExistException("Employee with id " + newEmployee.getEmail() + " already exist");
 		}
 		Employee employee = modelMapper.map(newEmployee, Employee.class);
 		String password = passwordEncoder.encode(newEmployee.getPassword());
 		employee.setPassword(password);
 		employee.getRoles().add("EMPLOYEE");
 		employeeRepo.save(employee);
+		LOG.trace("employee with id {} was register", employee.getEmail());
 		return modelMapper.map(employee, InfoEmployeeDto.class);
 	}
 
 	@Override
 	public InfoEmployeeDto getEmployee(String id, String password) {
-		Employee employee = employeeRepo.findById(id).orElseThrow(EmployeeNotFoundException::new);
+		LOG.trace("received employee id {} for get", id);
+		Employee employee = employeeRepo.findById(id)
+				.orElseThrow(() -> new EmployeeNotFoundException("Employee with id " + id + " not found"));
 		if (!BCrypt.checkpw(password, employee.getPassword())) {
-			throw new WrongCredentialException();
+			LOG.error("wrong password");
+			throw new WrongCredentialException("Wrong password");
 		}
+		LOG.trace("employee with id {} was found", employee.getEmail());
 		return modelMapper.map(employee, InfoEmployeeDto.class);
 	}
 
