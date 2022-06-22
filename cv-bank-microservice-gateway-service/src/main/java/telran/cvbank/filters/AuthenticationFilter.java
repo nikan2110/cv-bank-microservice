@@ -1,5 +1,7 @@
 package telran.cvbank.filters;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -18,6 +20,8 @@ import telran.cvbank.jwt.JwtUtil;
 @Component
 @Order(1)
 public class AuthenticationFilter implements GatewayFilter {
+	
+	static Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
 	JwtUtil jwtUtil;
 	RouterValidator routerValidator;
@@ -30,20 +34,19 @@ public class AuthenticationFilter implements GatewayFilter {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		System.out.println("Filter auth started");
+		LOG.info("authentication filter started");
 		ServerHttpRequest request = exchange.getRequest();
 		if (routerValidator.isSecured.test(request)) {
 			if (isAuthMissing(request)) {
 				throw new AuthorizationHeaderIsMissingException("Authorization header is missing in request");
 			}
 			final String token = getAuthHeader(request);
-			System.out.println("AuthFilter: {} " + token);
-
 			if (jwtUtil.isInvavlid(token)) {
 				throw new AuthorizationHeaderIsInvalidException("Authorization header is missing in request");
 			}
 			populateRequestWithHeaders(exchange, token);
 		}
+		LOG.info("authentication filter finished");
 		return chain.filter(exchange);
 	}
 
