@@ -34,11 +34,8 @@
 	<modules>
 		<module>cv-bank-microservice-employee-service</module>
 		<module>cv-bank-microservice-config</module>
-		<module>cv-bank-microservice-employer-service</module>
 		<module>cv-bank-microservice-authentication-service</module>
-		<module>cv-bank-microservice-registy-service</module>
-		<module>cv-bank-microservice-gateway</module>
-		<module>cv-bank-microservice-authentication-server</module>
+		<module>cv-bank-microservice-registry-service</module>
 		<module>cv-bank-microservice-gateway-service</module>
 	</modules>
 
