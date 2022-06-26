@@ -13,14 +13,13 @@ import org.springframework.web.server.ServerWebExchange;
 import io.jsonwebtoken.Claims;
 import reactor.core.publisher.Mono;
 import telran.cvbank.configuration.RouterValidator;
-import telran.cvbank.exceptions.AuthorizationHeaderIsInvalidException;
 import telran.cvbank.exceptions.AuthorizationHeaderIsMissingException;
 import telran.cvbank.jwt.JwtUtil;
 
 @Component
 @Order(1)
 public class AuthenticationFilter implements GatewayFilter {
-	
+
 	static Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
 	JwtUtil jwtUtil;
@@ -34,19 +33,17 @@ public class AuthenticationFilter implements GatewayFilter {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		LOG.info("authentication filter started");
+		LOG.info("populate header filter started");
 		ServerHttpRequest request = exchange.getRequest();
 		if (routerValidator.isSecured.test(request)) {
 			if (isAuthMissing(request)) {
 				throw new AuthorizationHeaderIsMissingException("Authorization header is missing in request");
 			}
-			final String token = getAuthHeader(request);
-			if (jwtUtil.isInvavlid(token)) {
-				throw new AuthorizationHeaderIsInvalidException("Authorization header is missing in request");
-			}
+			final String token = getAuthHeader(request).substring(7);
 			populateRequestWithHeaders(exchange, token);
+
 		}
-		LOG.info("authentication filter finished");
+		LOG.info("populate header  filter finished");
 		return chain.filter(exchange);
 	}
 
