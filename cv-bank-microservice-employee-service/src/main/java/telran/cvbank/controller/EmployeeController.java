@@ -46,10 +46,6 @@ public class EmployeeController {
 		return employeeAccountService.getEmployee(id);
 	}
 
-	@GetMapping("/hello")
-	public String helloMethod() {
-		return "hello";
-	}
 
 //	@PutMapping("/login")
 //	public InfoEmployeeDto updateLogin(Authentication authentication, @RequestHeader("X-Login") String newLogin) {

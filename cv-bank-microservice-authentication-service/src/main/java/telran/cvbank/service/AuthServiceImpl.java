@@ -37,7 +37,6 @@ public class AuthServiceImpl implements AuthService {
 	public InfoEmployeeDto registerEmployee(RegisterEmployeeDto newEmployee) {
 		LOG.trace("received employee id {} for register", newEmployee.getEmail());
 		if (employeeRepo.existsById(newEmployee.getEmail())) {
-			LOG.error("employee with id {} not found", newEmployee.getEmail());
 			throw new EmployeeAlreadyExistException("Employee with id " + newEmployee.getEmail() + " already exist");
 		}
 		Employee employee = modelMapper.map(newEmployee, Employee.class);

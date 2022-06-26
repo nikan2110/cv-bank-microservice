@@ -3,6 +3,7 @@ package telran.cvbank.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -31,7 +32,9 @@ public class SecurityConfigAdapter {
 		http.securityContextRepository(contextRepository);
 		http.authorizeExchange().pathMatchers("/cvbank/auth/signup").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/auth/signin").permitAll();
-		http.authorizeExchange().pathMatchers("/cvbank/employee/{id}").authenticated();
+		http.authorizeExchange().pathMatchers("/cvbank/employee/{id}").access((mono, context) -> mono
+				.map(auth -> auth.getName().equals(context.getVariables().get("id")))
+				.map(AuthorizationDecision::new));
 		return http.build();
 	}
 }

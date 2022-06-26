@@ -61,8 +61,13 @@ public class JwtUtil {
 		}
 		final Date createdDate = new Date();
 		final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong);
-		return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(createdDate)
-				.setExpiration(expirationDate).signWith(key, SignatureAlgorithm.HS512).compact();
+		return Jwts.builder()
+				.setClaims(claims)
+				.setSubject(username)
+				.setIssuedAt(createdDate)
+				.setExpiration(expirationDate)
+				.signWith(key, SignatureAlgorithm.HS512)
+				.compact();
 
 	}
 
