@@ -1,5 +1,7 @@
 package telran.cvbank.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +15,8 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public class SecurityContextRepository implements ServerSecurityContextRepository {
+	
+	static Logger LOG = LoggerFactory.getLogger(AuthenticationManager.class);
 
 	AuthenticationManager authenticationManager;
 
@@ -29,9 +33,11 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
 	@Override
 	public Mono<SecurityContext> load(ServerWebExchange exchange) {
 		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+		LOG.trace("auth header {}", authHeader);
 		if (authHeader != null && authHeader.startsWith("Bearer")) {
 			String authToken = authHeader.substring(7);
 			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(authToken, authToken);
+			LOG.info("load method finished");
 			return authenticationManager.authenticate(auth).map(SecurityContextImpl::new);
 		}
 		return Mono.empty();

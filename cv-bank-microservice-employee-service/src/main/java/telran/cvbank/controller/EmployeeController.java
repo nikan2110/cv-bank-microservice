@@ -39,21 +39,17 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/{id}")
-	public InfoEmployeeDto findEmployee(@RequestHeader("id") String headerId, @RequestHeader("role") String role,
-			@PathVariable String id) {
-		System.out.println(headerId);
-		System.out.println(role);
+	public InfoEmployeeDto findEmployee(@PathVariable String id) {
 		return employeeAccountService.getEmployee(id);
 	}
 
+	@PutMapping("/login")
+	public InfoEmployeeDto updateLogin(@RequestHeader("id") String id, @RequestHeader("X-Login") String newLogin) {
+		return employeeAccountService.changeEmployeeLogin(id, newLogin);
+	}
 
-//	@PutMapping("/login")
-//	public InfoEmployeeDto updateLogin(Authentication authentication, @RequestHeader("X-Login") String newLogin) {
-//		return employeeAccountService.changeEmployeeLogin(authentication.getName(), newLogin);
-//	}
-//
-//	@PutMapping("/pass")
-//	public void updatePassword(Authentication authentication, @RequestHeader("X-Password") String newPassword) {
-//		employeeAccountService.changeEmployeePassword(authentication.getName(), newPassword);
-//	}
+	@PutMapping("/pass")
+	public void updatePassword(@RequestHeader("id") String id, @RequestHeader("X-Password") String newPassword) {
+		employeeAccountService.changeEmployeePassword(id, newPassword);
+	}
 }
