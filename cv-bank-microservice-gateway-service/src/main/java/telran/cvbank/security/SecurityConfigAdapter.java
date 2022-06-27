@@ -1,18 +1,27 @@
 package telran.cvbank.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authorization.AuthorizationContext;
+
+import reactor.core.publisher.Mono;
 
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfigAdapter {
+
+	static Logger LOG = LoggerFactory.getLogger(SecurityConfigAdapter.class);
 
 	AuthenticationManager authenticationManager;
 	SecurityContextRepository contextRepository;
@@ -32,9 +41,20 @@ public class SecurityConfigAdapter {
 		http.securityContextRepository(contextRepository);
 		http.authorizeExchange().pathMatchers("/cvbank/auth/signup").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/auth/signin").permitAll();
-		http.authorizeExchange().pathMatchers("/cvbank/employee/{id}").access((mono, context) -> mono
-				.map(auth -> auth.getName().equals(context.getVariables().get("id")))
-				.map(AuthorizationDecision::new));
+		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/employee/{id}").permitAll();
+		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/{id}").access(this::currentUserMatchesPath);
+		http.authorizeExchange().pathMatchers(HttpMethod.DELETE, "/cvbank/employee/{id}").access(this::currentUserMatchesPath);
+		http.authorizeExchange().anyExchange().authenticated();
 		return http.build();
 	}
+
+	private Mono<AuthorizationDecision> currentUserMatchesPath(Mono<Authentication> authentication,
+			AuthorizationContext context) {
+		System.out.println(context.getExchange().getRequest().getHeaders().getFirst("role"));
+		LOG.trace("requests variables", context.getVariables());
+		return authentication
+				.map(a -> context.getVariables().get("id").equals(a.getName()))
+				.map(granted -> new AuthorizationDecision(granted));
+	}
+
 }
