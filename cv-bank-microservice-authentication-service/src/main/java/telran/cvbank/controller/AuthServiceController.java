@@ -14,7 +14,7 @@ import telran.cvbank.jwt.JwtUtil;
 import telran.cvbank.service.AuthService;
 
 @RestController
-@RequestMapping("/cvbank/auth")
+@RequestMapping("/cvbank/employee/auth")
 public class AuthServiceController {
 
 	JwtUtil jwtUtil;

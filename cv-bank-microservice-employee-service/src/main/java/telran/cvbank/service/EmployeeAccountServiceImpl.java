@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import telran.cvbank.dao.EmployeeMongoRepository;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
-import telran.cvbank.dto.exceptions.EmployeeAlreadyExistException;
-import telran.cvbank.dto.exceptions.EmployeeNotFoundException;
+import telran.cvbank.exceptions.EmployeeAlreadyExistException;
+import telran.cvbank.exceptions.EmployeeNotFoundException;
 import telran.cvbank.model.Employee;
 
 @Service

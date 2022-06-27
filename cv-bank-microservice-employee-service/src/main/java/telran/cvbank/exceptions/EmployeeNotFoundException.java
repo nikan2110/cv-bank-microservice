@@ -1,4 +1,4 @@
-package telran.cvbank.dto.exceptions;
+package telran.cvbank.exceptions;
 
 
 import org.springframework.http.HttpStatus;

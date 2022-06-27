@@ -45,7 +45,8 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 		}
 		Claims claims = jwtUtil.getAllClaimsFromToken(authToken);
 		List<String> roles = claims.get("role", List.class);
-		List<GrantedAuthority> authorities = roles.stream().map(r -> new SimpleGrantedAuthority(r))
+		List<GrantedAuthority> authorities = roles.stream()
+				.map(r -> new SimpleGrantedAuthority(r))
 				.collect(Collectors.toList());
 		LOG.trace("authorities list {}", authorities);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
 		Employee employee = modelMapper.map(newEmployee, Employee.class);
 		String password = passwordEncoder.encode(newEmployee.getPassword());
 		employee.setPassword(password);
-		employee.getRoles().add("EMPLOYEE");
+		employee.getRoles().add("ROLE_EMPLOYEE");
 		employeeRepo.save(employee);
 		LOG.trace("employee with id {} was register", employee.getEmail());
 		return modelMapper.map(employee, InfoEmployeeDto.class);

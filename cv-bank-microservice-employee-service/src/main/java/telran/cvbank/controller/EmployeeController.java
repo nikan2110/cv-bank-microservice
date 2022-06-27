@@ -1,5 +1,7 @@
 package telran.cvbank.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +23,9 @@ import telran.cvbank.service.EmployeeAccountService;
 @CrossOrigin(origins = "*", methods = { RequestMethod.DELETE, RequestMethod.GET, RequestMethod.OPTIONS,
 		RequestMethod.POST, RequestMethod.PUT }, allowedHeaders = "*", exposedHeaders = "*")
 public class EmployeeController {
+	
+	static Logger LOG = LoggerFactory.getLogger(EmployeeController.class);
+	
 	EmployeeAccountService employeeAccountService;
 
 	@Autowired
@@ -45,6 +50,7 @@ public class EmployeeController {
 
 	@PutMapping("/login")
 	public InfoEmployeeDto updateLogin(@RequestHeader("id") String id, @RequestHeader("X-Login") String newLogin) {
+		LOG.trace("received employee id {}", id);
 		return employeeAccountService.changeEmployeeLogin(id, newLogin);
 	}
 

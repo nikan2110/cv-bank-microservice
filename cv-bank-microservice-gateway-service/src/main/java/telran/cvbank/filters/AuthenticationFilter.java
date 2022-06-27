@@ -43,7 +43,7 @@ public class AuthenticationFilter implements GatewayFilter {
 			populateRequestWithHeaders(exchange, token);
 
 		}
-		LOG.info("populate header  filter finished");
+		LOG.info("populate header filter finished");
 		return chain.filter(exchange);
 	}
 
