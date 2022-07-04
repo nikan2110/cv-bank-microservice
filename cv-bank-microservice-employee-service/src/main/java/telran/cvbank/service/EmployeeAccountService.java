@@ -3,6 +3,7 @@ package telran.cvbank.service;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
+import telran.cvbank.model.Employee;
 
 public interface EmployeeAccountService {
 	
@@ -17,4 +18,6 @@ public interface EmployeeAccountService {
 	void changeEmployeePassword(String id, String newPassword);
 	
 	void deleteEmployee(String id);
+	
+	Employee getEmployeeById(String id);
 }

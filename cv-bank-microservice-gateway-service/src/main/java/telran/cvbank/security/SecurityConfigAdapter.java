@@ -46,6 +46,7 @@ public class SecurityConfigAdapter {
 		http.securityContextRepository(contextRepository);
 		http.authorizeExchange().pathMatchers("/cvbank/employee/signup").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/auth/signin").permitAll();
+		http.authorizeExchange().pathMatchers("/cvbank/employee/feign/**").denyAll();
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/login").hasRole("EMPLOYEE");
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/pass").hasRole("EMPLOYEE");
 		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/employee/{id}").permitAll();

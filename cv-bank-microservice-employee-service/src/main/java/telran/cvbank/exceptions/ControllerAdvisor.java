@@ -15,15 +15,27 @@ import telran.cvbank.model.ErrorMessage;
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	
 	
-	@ExceptionHandler(WrongCredentialException.class)
-	public ResponseEntity<ErrorMessage> handleWrongCredentialException(WrongCredentialException ex, WebRequest webRequest) {
+	@ExceptionHandler(EmployeeAlreadyExistException.class)
+	public ResponseEntity<ErrorMessage> handleEmployeeAlreadyExistException(EmployeeAlreadyExistException ex, WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder()
-				.statusCode(HttpStatus.FORBIDDEN.value())
+				.statusCode(HttpStatus.CONFLICT.value())
 				.timestamp(LocalDateTime.now())
 				.message(ex.getMessage())
 				.description(webRequest.getDescription(false))
 				.build();
-		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.FORBIDDEN);
+		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.CONFLICT);
+		
+	}
+	
+	@ExceptionHandler(EmployeeNotFoundException.class)
+	public ResponseEntity<ErrorMessage> handleEmployeeNotFoundException(EmployeeNotFoundException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder()
+				.statusCode(HttpStatus.NOT_FOUND.value())
+				.timestamp(LocalDateTime.now())
+				.message(ex.getMessage())
+				.description(webRequest.getDescription(false))
+				.build();
+		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.NOT_FOUND);
 		
 	}
 	

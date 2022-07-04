@@ -8,36 +8,33 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import telran.cvbank.dao.EmployeeMongoRepository;
 import telran.cvbank.dto.InfoEmployeeDto;
-import telran.cvbank.exceptions.EmployeeNotFoundException;
 import telran.cvbank.exceptions.WrongCredentialException;
+import telran.cvbank.feign.EmployeeServiceProxy;
 import telran.cvbank.model.Employee;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-	
+
 	static Logger LOG = LoggerFactory.getLogger(AuthServiceImpl.class);
 
-	EmployeeMongoRepository employeeRepo;
 	ModelMapper modelMapper;
 	PasswordEncoder passwordEncoder;
+	EmployeeServiceProxy employeeServiceProxy; 
 
 	@Autowired
-	public AuthServiceImpl(EmployeeMongoRepository employeeRepo, ModelMapper modelMapper,
-			PasswordEncoder passwordEncoder) {
-		this.employeeRepo = employeeRepo;
+	public AuthServiceImpl(ModelMapper modelMapper, PasswordEncoder passwordEncoder, EmployeeServiceProxy employeeServiceProxy) {
 		this.modelMapper = modelMapper;
 		this.passwordEncoder = passwordEncoder;
+		this.employeeServiceProxy = employeeServiceProxy;
 	}
-
-
 
 	@Override
 	public InfoEmployeeDto getEmployee(String id, String password) {
 		LOG.trace("received employee id {} for get", id);
-		Employee employee = employeeRepo.findById(id)
-				.orElseThrow(() -> new EmployeeNotFoundException("Employee with id " + id + " not found"));
+		Employee employee = employeeServiceProxy.getEmployeeById(id);
+		System.out.println(employee);
+		LOG.trace("received employee from employee-service {}", employee.getEmail());
 		if (!BCrypt.checkpw(password, employee.getPassword())) {
 			LOG.error("wrong password");
 			throw new WrongCredentialException("Wrong password");

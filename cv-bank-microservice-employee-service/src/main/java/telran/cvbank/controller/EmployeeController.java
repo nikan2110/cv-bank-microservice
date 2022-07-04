@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
+import telran.cvbank.model.Employee;
 import telran.cvbank.service.EmployeeAccountService;
 
 @RestController
@@ -64,5 +65,11 @@ public class EmployeeController {
 	@PutMapping("/pass")
 	public void updatePassword(@RequestHeader("id") String id, @RequestHeader("X-Password") String newPassword) {
 		employeeAccountService.changeEmployeePassword(id, newPassword);
+	}
+	
+	@GetMapping("/feign/{id}")
+	public Employee getEmployeeById(@PathVariable String id) {
+		LOG.trace("received employee id {}", id);
+		return employeeAccountService.getEmployeeById(id);
 	}
 }

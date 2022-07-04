@@ -1,13 +1,11 @@
 package telran.cvbank.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.*;
-
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter

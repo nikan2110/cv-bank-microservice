@@ -15,7 +15,7 @@ import telran.cvbank.model.ErrorMessage;
 public class ControllerAdvisor {
 	
 	@ExceptionHandler(AuthorizationHeaderIsInvalidException.class)
-	public ResponseEntity<ErrorMessage> handleEmployeeAlreadyExistException(AuthorizationHeaderIsInvalidException ex, WebRequest webRequest) {
+	public ResponseEntity<ErrorMessage> handleAuthorizationHeaderIsInvalidException(AuthorizationHeaderIsInvalidException ex, WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder()
 				.statusCode(HttpStatus.BAD_REQUEST.value())
 				.timestamp(LocalDateTime.now())
@@ -27,7 +27,7 @@ public class ControllerAdvisor {
 	}
 	
 	@ExceptionHandler(AuthorizationHeaderIsMissingException.class)
-	public ResponseEntity<ErrorMessage> handleEmployeeNotFoundException(AuthorizationHeaderIsMissingException ex, WebRequest webRequest) {
+	public ResponseEntity<ErrorMessage> handleAuthorizationHeaderIsMissingException(AuthorizationHeaderIsMissingException ex, WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder()
 				.statusCode(HttpStatus.NOT_FOUND.value())
 				.timestamp(LocalDateTime.now())
@@ -51,7 +51,7 @@ public class ControllerAdvisor {
 	}
 	
 	@ExceptionHandler(JwtException.class)
-	public ResponseEntity<ErrorMessage> handleTokenExpired(Exception ex, WebRequest webRequest) {
+	public ResponseEntity<ErrorMessage> handleTokenException(JwtException ex, WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder()
 				.statusCode(HttpStatus.FORBIDDEN.value())
 				.timestamp(LocalDateTime.now())

@@ -87,7 +87,7 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
         employeeRepo.save(employee);
     }
 
-    private Employee getEmployeeById(String id) {
+    public Employee getEmployeeById(String id) {
         return employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee " + id + " not found"));
     }
 }
