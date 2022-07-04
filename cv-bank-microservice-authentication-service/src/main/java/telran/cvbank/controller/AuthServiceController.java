@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.JwtRequestDto;
 import telran.cvbank.dto.JwtResponseDto;
-import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.jwt.JwtUtil;
 import telran.cvbank.service.AuthService;
 
 @RestController
-@RequestMapping("/cvbank/employee/auth")
+@RequestMapping("/cvbank/auth")
 public class AuthServiceController {
 
 	JwtUtil jwtUtil;
@@ -24,11 +23,6 @@ public class AuthServiceController {
 	public AuthServiceController(JwtUtil jwtUtil, AuthService employeeServiceAuth) {
 		this.jwtUtil = jwtUtil;
 		this.employeeServiceAuth = employeeServiceAuth;
-	}
-
-	@PostMapping("/signup")
-	public InfoEmployeeDto signup(@RequestBody RegisterEmployeeDto newEmployee) {
-		return employeeServiceAuth.registerEmployee(newEmployee);
 	}
 
 	@PostMapping("/signin")

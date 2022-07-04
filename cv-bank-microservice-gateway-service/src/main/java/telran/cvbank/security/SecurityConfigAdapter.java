@@ -44,9 +44,10 @@ public class SecurityConfigAdapter {
 		http.cors().and().csrf().disable();
 		http.authenticationManager(authenticationManager);
 		http.securityContextRepository(contextRepository);
-		http.authorizeExchange().pathMatchers("/cvbank/employee/auth/signup").permitAll();
-		http.authorizeExchange().pathMatchers("/cvbank/employee/auth/signin").permitAll();
+		http.authorizeExchange().pathMatchers("/cvbank/employee/signup").permitAll();
+		http.authorizeExchange().pathMatchers("/cvbank/auth/signin").permitAll();
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/login").hasRole("EMPLOYEE");
+		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/pass").hasRole("EMPLOYEE");
 		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/employee/{id}").permitAll();
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/{id}").access(this::currentUserMatchesPath);
 		http.authorizeExchange().pathMatchers(HttpMethod.DELETE, "/cvbank/employee/{id}").access(this::currentUserMatchesPath);

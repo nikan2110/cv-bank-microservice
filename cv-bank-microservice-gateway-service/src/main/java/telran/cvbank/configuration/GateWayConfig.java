@@ -22,7 +22,7 @@ public class GateWayConfig {
 	public RouteLocator routes(RouteLocatorBuilder builder) {
 		return builder.routes()
 				.route("cv-bank-microservice-authentication-server",
-						route -> route.path("/cvbank/employee/auth/**").filters(f -> f.filter(filter))
+						route -> route.path("/cvbank/auth/**").filters(f -> f.filter(filter))
 								.uri("lb://cv-bank-microservice-authentication-server"))
 				.route("cv-bank-microservice-employee-service",
 						route -> route.path("/cvbank/employee/**").filters(f -> f.filter(filter))

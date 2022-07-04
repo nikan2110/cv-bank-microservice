@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import io.jsonwebtoken.JwtException;
 import telran.cvbank.model.ErrorMessage;
 
 @ControllerAdvice
@@ -49,6 +50,18 @@ public class ControllerAdvisor {
 		
 	}
 	
+	@ExceptionHandler(JwtException.class)
+	public ResponseEntity<ErrorMessage> handleTokenExpired(Exception ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder()
+				.statusCode(HttpStatus.FORBIDDEN.value())
+				.timestamp(LocalDateTime.now())
+				.message(ex.getMessage())
+				.description(webRequest.getDescription(false))
+				.build();
+		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.FORBIDDEN);
+	}
+
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorMessage> handleGlobalException(Exception ex, WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder()
@@ -59,5 +72,6 @@ public class ControllerAdvisor {
 				.build();
 		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
 
 }

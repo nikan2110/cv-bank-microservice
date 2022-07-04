@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import telran.cvbank.dao.EmployeeMongoRepository;
 import telran.cvbank.dto.InfoEmployeeDto;
-import telran.cvbank.dto.RegisterEmployeeDto;
-import telran.cvbank.exceptions.EmployeeAlreadyExistException;
 import telran.cvbank.exceptions.EmployeeNotFoundException;
 import telran.cvbank.exceptions.WrongCredentialException;
 import telran.cvbank.model.Employee;
@@ -33,20 +31,7 @@ public class AuthServiceImpl implements AuthService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	@Override
-	public InfoEmployeeDto registerEmployee(RegisterEmployeeDto newEmployee) {
-		LOG.trace("received employee id {} for register", newEmployee.getEmail());
-		if (employeeRepo.existsById(newEmployee.getEmail())) {
-			throw new EmployeeAlreadyExistException("Employee with id " + newEmployee.getEmail() + " already exist");
-		}
-		Employee employee = modelMapper.map(newEmployee, Employee.class);
-		String password = passwordEncoder.encode(newEmployee.getPassword());
-		employee.setPassword(password);
-		employee.getRoles().add("ROLE_EMPLOYEE");
-		employeeRepo.save(employee);
-		LOG.trace("employee with id {} was register", employee.getEmail());
-		return modelMapper.map(employee, InfoEmployeeDto.class);
-	}
+
 
 	@Override
 	public InfoEmployeeDto getEmployee(String id, String password) {

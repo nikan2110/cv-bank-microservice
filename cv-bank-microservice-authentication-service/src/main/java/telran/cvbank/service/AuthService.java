@@ -5,7 +5,5 @@ import telran.cvbank.dto.RegisterEmployeeDto;
 
 public interface AuthService {
 	
-	InfoEmployeeDto registerEmployee(RegisterEmployeeDto newEmployee);
-	
 	InfoEmployeeDto getEmployee(String id, String password);
 }
