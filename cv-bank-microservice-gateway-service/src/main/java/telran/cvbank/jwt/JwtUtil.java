@@ -32,11 +32,11 @@ public class JwtUtil {
 
 
 	public Boolean isTokenExpired(String token) {
-		return this.getAllClaimsFromToken(token).getExpiration().before(new Date());
+		return getAllClaimsFromToken(token).getExpiration().before(new Date());
 	}
 
 	public Boolean isInvavlid(String token) {
-		return this.isTokenExpired(token);
+		return isTokenExpired(token);
 	}
 
 }

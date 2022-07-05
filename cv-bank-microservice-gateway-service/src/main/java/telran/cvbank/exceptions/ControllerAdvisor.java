@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import telran.cvbank.model.ErrorMessage;
 
@@ -60,18 +61,29 @@ public class ControllerAdvisor {
 				.build();
 		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.FORBIDDEN);
 	}
-
 	
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorMessage> handleGlobalException(Exception ex, WebRequest webRequest) {
+	@ExceptionHandler(ExpiredJwtException.class)
+	public ResponseEntity<ErrorMessage> handleExpiredJwtException(ExpiredJwtException ex, WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder()
-				.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+				.statusCode(HttpStatus.FORBIDDEN.value())
 				.timestamp(LocalDateTime.now())
 				.message(ex.getMessage())
 				.description(webRequest.getDescription(false))
 				.build();
-		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.FORBIDDEN);
 	}
+
+	
+//	@ExceptionHandler(Exception.class)
+//	public ResponseEntity<ErrorMessage> handleGlobalException(Exception ex, WebRequest webRequest) {
+//		ErrorMessage errorMessage = ErrorMessage.builder()
+//				.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//				.timestamp(LocalDateTime.now())
+//				.message(ex.getMessage())
+//				.description(webRequest.getDescription(false))
+//				.build();
+//		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+//	}
 	
 
 }

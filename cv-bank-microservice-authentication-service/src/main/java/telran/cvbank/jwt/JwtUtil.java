@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -29,20 +30,19 @@ public class JwtUtil {
 	@PostConstruct
 	public void init() {
 		String encodeJwtSecret = DigestUtils.sha256Hex(jwtSecret);
-		this.key = Keys.hmacShaKeyFor(encodeJwtSecret.getBytes());
+		key = Keys.hmacShaKeyFor(encodeJwtSecret.getBytes());
 	}
 
 	public Claims getAllClaimsFromToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 	}
-
-	public Date getExpirationDateFromToken(String token) {
-		return getAllClaimsFromToken(token).getExpiration();
+	
+	public Boolean isTokenExpired(String token) {
+		return getAllClaimsFromToken(token).getExpiration().before(new Date());
 	}
 
-	public Boolean isTokenExpired(String token) {
-		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
+	public Boolean isInvavlid(String token) {
+		return isTokenExpired(token);
 	}
 
 	public String generateToken(InfoEmployeeDto infoEmployeeDto, String type) {
@@ -53,26 +53,16 @@ public class JwtUtil {
 	}
 
 	private String doGenerateToken(Map<String, Object> claims, String username, String type) {
-		long expirationTimeLong;
-		if ("ACCESS".equals(type)) {
-			expirationTimeLong = tokenValidity * 1000;
-		} else {
-			expirationTimeLong = tokenValidity * 1000 * 5;
-		}
 		final Date createdDate = new Date();
-		final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong);
+		final Date expirationDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(tokenValidity));
 		return Jwts.builder()
+				.setSubject("Employee details")
 				.setClaims(claims)
-				.setSubject(username)
 				.setIssuedAt(createdDate)
 				.setExpiration(expirationDate)
+				.setIssuer("authentication-service")
 				.signWith(key, SignatureAlgorithm.HS512)
 				.compact();
-
-	}
-
-	public Boolean validateToken(String token) {
-		return !isTokenExpired(token);
 	}
 
 }

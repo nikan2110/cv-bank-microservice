@@ -29,8 +29,7 @@ public class AuthServiceController {
 	public JwtResponseDto generateJwtToken(@RequestBody JwtRequestDto jwtRequest) {
 		InfoEmployeeDto infoEmployeeDto = employeeServiceAuth.getEmployee(jwtRequest.getUsername(), jwtRequest.getPassword());
 		String accesstoken = jwtUtil.generateToken(infoEmployeeDto, "ACCESS");
-		String refreshToken = jwtUtil.generateToken(infoEmployeeDto, "REFRESH");
-		return new JwtResponseDto(accesstoken, refreshToken);
+		return new JwtResponseDto(accesstoken);
 	}
 
 }

@@ -38,11 +38,11 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 			throw new AuthorizationHeaderIsMissingException("Authorization header is missing in request");
 		}
 		LOG.trace("received auth token {}", authToken);
-		String userName = jwtUtil.getAllClaimsFromToken(authToken).get("id").toString();
-		LOG.trace("received user id {}", userName);
 		if (jwtUtil.isInvavlid(authToken)) {
 			throw new AuthorizationHeaderIsInvalidException("Token is not valid");
 		}
+		String userName = jwtUtil.getAllClaimsFromToken(authToken).get("id").toString();
+		LOG.trace("received user id {}", userName);
 		Claims claims = jwtUtil.getAllClaimsFromToken(authToken);
 		List<String> roles = claims.get("role", List.class);
 		List<GrantedAuthority> authorities = roles.stream()

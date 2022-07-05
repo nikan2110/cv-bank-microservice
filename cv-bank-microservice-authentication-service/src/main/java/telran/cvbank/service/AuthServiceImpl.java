@@ -33,7 +33,6 @@ public class AuthServiceImpl implements AuthService {
 	public InfoEmployeeDto getEmployee(String id, String password) {
 		LOG.trace("received employee id {} for get", id);
 		Employee employee = employeeServiceProxy.getEmployeeById(id);
-		System.out.println(employee);
 		LOG.trace("received employee from employee-service {}", employee.getEmail());
 		if (!BCrypt.checkpw(password, employee.getPassword())) {
 			LOG.error("wrong password");
