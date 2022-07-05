@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
@@ -26,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import telran.cvbank.dao.EmployeeMongoRepository;
-import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
 import telran.cvbank.exceptions.EmployeeAlreadyExistException;
@@ -37,6 +37,7 @@ import telran.cvbank.service.EmployeeAccountServiceImpl;
 @EnableConfigurationProperties
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
+@EnableEurekaClient
 class CvbankApplicationEmployeeTests {
 
 	private static final String BASE_URL_EMPLOYEE = "/cvbank/employee";
@@ -66,18 +67,17 @@ class CvbankApplicationEmployeeTests {
 	@Test
 	public void addEmployee() throws Exception {
 		System.out.println("1 test");
-		String url = "http://cv-bank-microservice-authentication-server/cvbank/employee/auth/signup";
-		RegisterEmployeeDto newEmployeeDto = modelMapper.map(employee, RegisterEmployeeDto.class);
-		InfoEmployeeDto infoEmployeeDto = restTemplate.getForObject(url, InfoEmployeeDto.class);
-		assertEquals(employee.getEmail(), infoEmployeeDto.getEmail());
-		String json = convertToJson(newEmployeeDto);
-		mockMvc.perform(post(BASE_URL_EMPLOYEE + "/signup").contentType(MediaType.APPLICATION_JSON).content(json))
-				.andExpect(status().isConflict())
-				.andExpect(result -> assertTrue(
-						result.getResponse().getContentAsString().contains("Employee already exist")))
-				.andExpect(
-						result -> assertTrue(result.getResolvedException() instanceof EmployeeAlreadyExistException));
-		assertEquals(5, 5);
+        RegisterEmployeeDto newEmployeeDto = modelMapper.map(employee, RegisterEmployeeDto.class);
+		System.out.println("2 test");
+        assertEquals(employee.getEmail(), employeeService.registerEmployee(newEmployeeDto).getEmail());
+        System.out.println("3 test");
+//        String json = convertToJson(newEmployeeDto);
+//        mockMvc.perform(post(BASE_URL_EMPLOYEE + "/signup")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(json))
+//                .andExpect(status().isConflict())
+//                .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains("Employee already exist")))
+//                .andExpect(result -> assertTrue(result.getResolvedException() instanceof EmployeeAlreadyExistException));
 	}
 
 //    @Test
