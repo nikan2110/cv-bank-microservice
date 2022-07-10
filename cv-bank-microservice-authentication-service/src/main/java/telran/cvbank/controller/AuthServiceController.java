@@ -28,7 +28,7 @@ public class AuthServiceController {
 	@PostMapping("/signin")
 	public JwtResponseDto generateJwtToken(@RequestBody JwtRequestDto jwtRequest) {
 		InfoEmployeeDto infoEmployeeDto = employeeServiceAuth.getEmployee(jwtRequest.getUsername(), jwtRequest.getPassword());
-		String accesstoken = jwtUtil.generateToken(infoEmployeeDto, "ACCESS");
+		String accesstoken = jwtUtil.generateToken(infoEmployeeDto);
 		return new JwtResponseDto(accesstoken);
 	}
 

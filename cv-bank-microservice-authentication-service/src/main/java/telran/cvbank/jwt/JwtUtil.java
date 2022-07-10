@@ -24,7 +24,7 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
 	String jwtSecret;
 	@Value("${jwt.token.validity}")
-	long tokenValidity;
+	int tokenValidity;
 	Key key;
 
 	@PostConstruct
@@ -45,14 +45,14 @@ public class JwtUtil {
 		return isTokenExpired(token);
 	}
 
-	public String generateToken(InfoEmployeeDto infoEmployeeDto, String type) {
+	public String generateToken(InfoEmployeeDto infoEmployeeDto) {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("id", infoEmployeeDto.getEmail());
 		claims.put("role", infoEmployeeDto.getRoles());
-		return doGenerateToken(claims, infoEmployeeDto.getEmail(), type);
+		return doGenerateToken(claims, infoEmployeeDto.getEmail());
 	}
 
-	private String doGenerateToken(Map<String, Object> claims, String username, String type) {
+	private String doGenerateToken(Map<String, Object> claims, String username) {
 		final Date createdDate = new Date();
 		final Date expirationDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(tokenValidity));
 		return Jwts.builder()

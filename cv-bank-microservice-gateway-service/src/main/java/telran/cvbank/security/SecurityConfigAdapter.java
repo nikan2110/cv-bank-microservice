@@ -52,7 +52,6 @@ public class SecurityConfigAdapter {
 		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/employee/{id}").permitAll();
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/{id}").access(this::currentUserMatchesPath);
 		http.authorizeExchange().pathMatchers(HttpMethod.DELETE, "/cvbank/employee/{id}").access(this::currentUserMatchesPath);
-//		http.authorizeExchange().pathMatchers("/cvbank/employee/pass").hasAnyRole("EMPLOYEE", "ADMIN");
 		http.authorizeExchange().anyExchange().authenticated();
 		return http.build();
 	}
