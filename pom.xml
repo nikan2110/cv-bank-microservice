@@ -23,7 +23,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -37,6 +36,7 @@
 		<module>cv-bank-microservice-authentication-service</module>
 		<module>cv-bank-microservice-registry-service</module>
 		<module>cv-bank-microservice-gateway-service</module>
+		<module>cv-bank-microservice-cv-service</module>
 	</modules>
 
 </project>
