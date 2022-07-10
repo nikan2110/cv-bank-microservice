@@ -27,6 +27,9 @@ public class GateWayConfig {
 				.route("cv-bank-microservice-employee-service",
 						route -> route.path("/cvbank/employee/**").filters(f -> f.filter(filter))
 								.uri("lb://cv-bank-microservice-employee-service"))
+				.route("cv-bank-microservice-cv-service",
+						route -> route.path("/cvbank/cv/**").filters(f -> f.filter(filter))
+								.uri("lb://cv-bank-microservice-cv-service"))
 				.build();
 	}
 
