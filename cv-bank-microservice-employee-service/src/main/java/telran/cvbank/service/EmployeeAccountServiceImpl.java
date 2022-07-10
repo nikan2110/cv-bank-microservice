@@ -1,5 +1,8 @@
 package telran.cvbank.service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import telran.cvbank.constants.Constants;
 import telran.cvbank.dao.EmployeeMongoRepository;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
+import telran.cvbank.exceptions.ArgumentNotValidException;
 import telran.cvbank.exceptions.EmployeeAlreadyExistException;
 import telran.cvbank.exceptions.EmployeeNotFoundException;
 import telran.cvbank.model.Employee;
@@ -23,6 +28,7 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
     EmployeeMongoRepository employeeRepo;
     ModelMapper modelMapper;
 	PasswordEncoder passwordEncoder;
+	Constants constants;
 
     @Autowired
     public EmployeeAccountServiceImpl(EmployeeMongoRepository employeeRepo, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
@@ -33,6 +39,9 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
     
 	@Override
 	public InfoEmployeeDto registerEmployee(RegisterEmployeeDto newEmployee) {
+		if (!validateEmail(newEmployee.getEmail())) {
+			throw new ArgumentNotValidException("Email " + newEmployee.getEmail() + " not valid"); 
+		} 
 		LOG.trace("received employee id {} for register", newEmployee.getEmail());
 		if (employeeRepo.existsById(newEmployee.getEmail())) {
 			throw new EmployeeAlreadyExistException("Employee with id " + newEmployee.getEmail() + " already exist");
@@ -69,6 +78,9 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
 
     @Override
     public InfoEmployeeDto changeEmployeeLogin(String id, String newLogin) {
+		if (!validateEmail(newLogin)) {
+			throw new ArgumentNotValidException("Email " + newLogin + " not valid"); 
+		}
         if (employeeRepo.existsById(newLogin)) {
             throw new EmployeeAlreadyExistException("Employee " + id + " already exist");
         }
@@ -78,9 +90,12 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
         employeeRepo.save(employee);
         return modelMapper.map(employee, InfoEmployeeDto.class);
     }
-
-    @Override
+    
+	@Override
     public void changeEmployeePassword(String id, String newPassword) {
+		if (newPassword.length() < 6 || newPassword.length() > 16) {
+			throw new ArgumentNotValidException("Password must be from 6 to 16 symbols");
+		}
         Employee employee = getEmployeeById(id);
         String password = passwordEncoder.encode(newPassword);
         employee.setPassword(password);
@@ -90,4 +105,11 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
     public Employee getEmployeeById(String id) {
         return employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee " + id + " not found"));
     }
+    
+    private boolean validateEmail(String email) {
+		Pattern pattern = Pattern.compile(Constants.EMAIL_VALIDATION);
+		Matcher matcher = pattern.matcher(email);
+		return matcher.matches();
+	}
+
 }

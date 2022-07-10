@@ -1,5 +1,7 @@
 package telran.cvbank.controller;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +39,12 @@ public class EmployeeController {
 	}
 	
 	@PostMapping("/signup")
-	public InfoEmployeeDto signup(@RequestBody RegisterEmployeeDto newEmployee) {
+	public InfoEmployeeDto signup(@Valid @RequestBody  RegisterEmployeeDto newEmployee) {
 		return employeeAccountService.registerEmployee(newEmployee);
 	}
 
 	@PutMapping("/{id}")
-	public InfoEmployeeDto updateEmployee(@RequestBody UpdateEmployeeDto employeeData, @PathVariable String id) {
+	public InfoEmployeeDto updateEmployee(@Valid @RequestBody UpdateEmployeeDto employeeData, @PathVariable String id) {
 		return employeeAccountService.updateEmployee(employeeData, id);
 	}
 
