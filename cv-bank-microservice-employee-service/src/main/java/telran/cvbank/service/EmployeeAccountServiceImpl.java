@@ -1,5 +1,6 @@
 package telran.cvbank.service;
 
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,11 +8,13 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import telran.cvbank.constants.Constants;
 import telran.cvbank.dao.EmployeeMongoRepository;
+import telran.cvbank.dto.CVIdDataDto;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
@@ -101,8 +104,22 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
         employee.setPassword(password);
         employeeRepo.save(employee);
     }
+	
+	@Bean
+	public Consumer<CVIdDataDto> addCVIdToEmployee() {
+		return (cvIdData) -> addCv(cvIdData);
+	}
 
-    public Employee getEmployeeById(String id) {
+    public void addCv(CVIdDataDto cvIdData) {
+    	LOG.info("receive cv id {}", cvIdData.getCVId());
+    	LOG.info("receive employee id {}", cvIdData.getUserId());
+		Employee employee = getEmployeeById(cvIdData.getUserId());
+		employee.getCv_id().add(cvIdData.getCVId());
+		LOG.info("cv was added {}", employee.getCv_id());
+		employeeRepo.save(employee);
+	}
+
+	public Employee getEmployeeById(String id) {
         return employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee " + id + " not found"));
     }
     
