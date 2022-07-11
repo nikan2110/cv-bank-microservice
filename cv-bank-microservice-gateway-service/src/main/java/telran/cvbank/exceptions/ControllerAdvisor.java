@@ -10,7 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import telran.cvbank.model.ErrorMessage;
+import telran.cvbank.models.ErrorMessage;
 
 @ControllerAdvice
 public class ControllerAdvisor {

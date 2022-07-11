@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Mono;
-import telran.cvbank.model.Employee;
+import telran.cvbank.models.Employee;
 
 @LoadBalancerClient(name = "cv-bank-microservice-employee-service")
 @ReactiveFeignClient(name="cv-bank-microservice-employee-service")

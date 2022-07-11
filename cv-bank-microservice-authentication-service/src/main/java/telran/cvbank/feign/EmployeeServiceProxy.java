@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import telran.cvbank.model.Employee;
+import telran.cvbank.models.Employee;
 
 @FeignClient(name="cv-bank-microservice-employee-service")
 @LoadBalancerClient(name = "cv-bank-microservice-employee-service")

@@ -1,4 +1,4 @@
-package telran.cvbank.service;
+package telran.cvbank.service.interfaces;
 
 public interface WeatherService {
 

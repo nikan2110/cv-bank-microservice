@@ -26,8 +26,10 @@ import telran.cvbank.dto.CVDto;
 import telran.cvbank.dto.CVIdDataDto;
 import telran.cvbank.dto.CVSearchDto;
 import telran.cvbank.dto.NewCVDto;
-import telran.cvbank.dto.exceptions.CVNotFoundException;
+import telran.cvbank.exceptions.CVNotFoundException;
 import telran.cvbank.models.CV;
+import telran.cvbank.service.interfaces.CVService;
+import telran.cvbank.service.interfaces.WeatherService;
 
 @Service
 public class CVServiceImpl implements CVService {
@@ -172,7 +174,7 @@ public class CVServiceImpl implements CVService {
 	}
 
 	private CV findCVbyId(String cvId) {
-		return cvRepository.findById(cvId).orElseThrow(CVNotFoundException::new);
+		return cvRepository.findById(cvId).orElseThrow(() ->  new CVNotFoundException("CV with id " + cvId + " not found"));
 	}
 
 	private CVDto setAnonymousFields(Set<String> anonymousFields, CVDto response) {

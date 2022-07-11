@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
-import telran.cvbank.model.Employee;
+import telran.cvbank.models.Employee;
 import telran.cvbank.service.EmployeeAccountService;
 import telran.cvbank.service.ServerPortService;
 

@@ -21,7 +21,7 @@ import telran.cvbank.dto.UpdateEmployeeDto;
 import telran.cvbank.exceptions.ArgumentNotValidException;
 import telran.cvbank.exceptions.EmployeeAlreadyExistException;
 import telran.cvbank.exceptions.EmployeeNotFoundException;
-import telran.cvbank.model.Employee;
+import telran.cvbank.models.Employee;
 
 @Service
 public class EmployeeAccountServiceImpl implements EmployeeAccountService {

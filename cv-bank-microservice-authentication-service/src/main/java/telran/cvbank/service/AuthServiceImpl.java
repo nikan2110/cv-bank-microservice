@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import telran.cvbank.dto.InfoEmployeeDto;
 import telran.cvbank.exceptions.WrongCredentialException;
 import telran.cvbank.feign.EmployeeServiceProxy;
-import telran.cvbank.model.Employee;
+import telran.cvbank.models.Employee;
 
 @Service
 public class AuthServiceImpl implements AuthService {

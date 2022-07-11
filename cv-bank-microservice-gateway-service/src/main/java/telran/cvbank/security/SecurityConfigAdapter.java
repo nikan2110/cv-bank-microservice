@@ -47,6 +47,7 @@ public class SecurityConfigAdapter {
 		http.cors().and().csrf().disable();
 		http.authenticationManager(authenticationManager);
 		http.securityContextRepository(contextRepository);
+		http.authorizeExchange().pathMatchers("/actuator/health").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/employee/signup").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/auth/signin").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/employee/feign/**").denyAll();
@@ -60,7 +61,7 @@ public class SecurityConfigAdapter {
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/cv/{cvId}").access(this::checkCVAuthority);
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/cv/publish/{cvId}").access(this::checkCVAuthority);
 		http.authorizeExchange().pathMatchers(HttpMethod.DELETE, "/cvbank/cv/{cvId}").access(this::checkCVAuthority);
-		// ============================================= EMPLOYEE ===========================================
+		// ============================================= EMPLOYEE =============================================
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/login").hasRole("EMPLOYEE");
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/pass").hasRole("EMPLOYEE");
 		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/employee/{id}").permitAll();

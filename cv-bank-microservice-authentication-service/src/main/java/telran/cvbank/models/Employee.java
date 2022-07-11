@@ -1,4 +1,4 @@
-package telran.cvbank.model;
+package telran.cvbank.models;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

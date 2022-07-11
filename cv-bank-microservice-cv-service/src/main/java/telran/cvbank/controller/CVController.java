@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import telran.cvbank.dto.CVDto;
 import telran.cvbank.dto.CVSearchDto;
 import telran.cvbank.dto.NewCVDto;
-import telran.cvbank.service.CVService;
+import telran.cvbank.service.interfaces.CVService;
 
 @RestController
 

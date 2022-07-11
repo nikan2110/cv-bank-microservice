@@ -19,7 +19,7 @@ import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
 import telran.cvbank.exceptions.EmployeeAlreadyExistException;
 import telran.cvbank.exceptions.EmployeeNotFoundException;
-import telran.cvbank.model.Employee;
+import telran.cvbank.models.Employee;
 import telran.cvbank.service.EmployeeAccountServiceImpl;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
