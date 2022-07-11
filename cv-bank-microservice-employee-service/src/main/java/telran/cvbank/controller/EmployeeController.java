@@ -22,6 +22,7 @@ import telran.cvbank.dto.RegisterEmployeeDto;
 import telran.cvbank.dto.UpdateEmployeeDto;
 import telran.cvbank.model.Employee;
 import telran.cvbank.service.EmployeeAccountService;
+import telran.cvbank.service.ServerPortService;
 
 @RestController
 @RequestMapping("/cvbank/employee")
@@ -32,10 +33,12 @@ public class EmployeeController {
 	static Logger LOG = LoggerFactory.getLogger(EmployeeController.class);
 	
 	EmployeeAccountService employeeAccountService;
+	ServerPortService serverPortService;
 
 	@Autowired
-	public EmployeeController(EmployeeAccountService employeeAccountService) {
+	public EmployeeController(EmployeeAccountService employeeAccountService, ServerPortService serverPortService) {
 		this.employeeAccountService = employeeAccountService;
+		this.serverPortService = serverPortService;
 	}
 	
 	@PostMapping("/signup")
@@ -72,6 +75,7 @@ public class EmployeeController {
 	@GetMapping("/feign/{id}")
 	public Employee getEmployeeById(@PathVariable String id) {
 		LOG.trace("received employee id {}", id);
+		LOG.info("port number {}", serverPortService.getPort());
 		return employeeAccountService.getEmployeeById(id);
 	}
 }
