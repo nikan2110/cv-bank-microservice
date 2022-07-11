@@ -78,4 +78,11 @@ public class EmployeeController {
 		LOG.info("port number {}", serverPortService.getPort());
 		return employeeAccountService.getEmployeeById(id);
 	}
+	
+	@DeleteMapping("/restTemplate/{id}/{cvId}")
+	public void deleteCVId(@PathVariable String id, @PathVariable String cvId) {
+		LOG.trace("received employee id {}", id);
+		LOG.trace("received cvId {}", cvId);
+		employeeAccountService.removeCVId(id, cvId);
+	}
 }

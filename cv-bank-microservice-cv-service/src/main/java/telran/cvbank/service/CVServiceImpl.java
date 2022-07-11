@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import telran.cvbank.dao.CVRepository;
 import telran.cvbank.dto.CVDto;
@@ -36,21 +37,24 @@ public class CVServiceImpl implements CVService {
 	CVRepository cvRepository;
 	WeatherService weatherService;
 	MongoTemplate mongoTemplate;
+	RestTemplate restTemplate;
 	ModelMapper modelMapper;
 	StreamBridge bridge;
 
 	@Autowired
 	public CVServiceImpl(CVRepository cvRepository, ModelMapper modelMapper, WeatherService weatherService,
-			MongoTemplate mongoTemplate, StreamBridge bridge) {
+			MongoTemplate mongoTemplate, StreamBridge bridge, RestTemplate restTemplate) {
 		this.cvRepository = cvRepository;
 		this.modelMapper = modelMapper;
 		this.weatherService = weatherService;
 		this.mongoTemplate = mongoTemplate;
+		this.restTemplate = restTemplate;
 		this.bridge = bridge;
 	}
 
 	@Override
 	public CVDto addCV(NewCVDto newCV, String login) {
+		LOG.trace("started create new cv for employee {}", login);
         CV cv = modelMapper.map(newCV, CV.class);
         Double[] coordinates = weatherService.getCoordinatesByCity(newCV.getAddress());
         Double lon = coordinates[0];
@@ -65,6 +69,7 @@ public class CVServiceImpl implements CVService {
 
 	@Override
 	public CVDto getCV(String cvId, String role) {
+		LOG.trace("received user with role {}", role);
 		CV cv = findCVbyId(cvId);
 		CVDto response = modelMapper.map(cv, CVDto.class);
 		Set<String> hideFields = cv.getHideFields();
@@ -89,17 +94,16 @@ public class CVServiceImpl implements CVService {
 		cv.setPublished(true);
 		cv.setDatePublished(LocalDate.now().plusDays(14));
 		cvRepository.save(cv);
+		LOG.trace("cv with was published {}", cvId);
 		return modelMapper.map(cv, CVDto.class);
 	}
 
 	@Override
 	public void removeCV(String cvId, String login) {
 		CV cv = findCVbyId(cvId);
-//        Employee employee = employeeRepository.findById(login).orElseThrow(EmployeeNotFoundException::new);
-//        employee.getCv_id().remove(cvId);
-//        employeeRepository.save(employee);
-//        cvRepository.delete(cv);
-		// TODO
+		restTemplate.delete("http://cv-bank-microservice-employee-service/cvbank/employee/restTemplate/" + login + "/" + cvId);
+		LOG.trace("cv was deleted {}", cvId);
+        cvRepository.delete(cv);
 	}
 
 	@Override

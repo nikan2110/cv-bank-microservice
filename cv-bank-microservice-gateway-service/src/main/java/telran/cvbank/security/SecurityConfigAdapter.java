@@ -80,7 +80,6 @@ public class SecurityConfigAdapter {
 
 	private Mono<AuthorizationDecision> currentUserMatchesPath(Mono<Authentication> authentication,
 			AuthorizationContext context) {
-		LOG.trace("requests variables", context.getVariables());
 		return authentication
 				.map(a -> context.getVariables().get("id").equals(a.getName()))
 				.map(granted -> new AuthorizationDecision(granted));

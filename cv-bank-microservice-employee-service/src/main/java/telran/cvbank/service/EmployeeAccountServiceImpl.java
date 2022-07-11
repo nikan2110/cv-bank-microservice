@@ -111,11 +111,11 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
 	}
 
     public void addCv(CVIdDataDto cvIdData) {
-    	LOG.info("receive cv id {}", cvIdData.getCVId());
-    	LOG.info("receive employee id {}", cvIdData.getUserId());
+    	LOG.trace("receive cv id {}", cvIdData.getCVId());
+    	LOG.trace("receive employee id {}", cvIdData.getUserId());
 		Employee employee = getEmployeeById(cvIdData.getUserId());
 		employee.getCv_id().add(cvIdData.getCVId());
-		LOG.info("cv was added {}", employee.getCv_id());
+		LOG.trace("cv was added {}", employee.getCv_id());
 		employeeRepo.save(employee);
 	}
 
@@ -128,5 +128,13 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
 		Matcher matcher = pattern.matcher(email);
 		return matcher.matches();
 	}
+    
+    public void removeCVId(String id, String cvId) {
+    	Employee employee = getEmployeeById(id);
+    	employee.getCv_id().remove(cvId);
+    	employeeRepo.save(employee);
+    	LOG.trace("cv was deleted {}", id);
+    	
+    }
 
 }

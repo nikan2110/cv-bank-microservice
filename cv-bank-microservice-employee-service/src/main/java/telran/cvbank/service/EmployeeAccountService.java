@@ -20,4 +20,7 @@ public interface EmployeeAccountService {
 	void deleteEmployee(String id);
 	
 	Employee getEmployeeById(String id);
+	
+	void removeCVId(String id, String cvId);
+
 }
