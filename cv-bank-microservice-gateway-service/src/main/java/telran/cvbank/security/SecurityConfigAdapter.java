@@ -16,6 +16,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 
 import reactor.core.publisher.Mono;
+import telran.cvbank.feign.EmployeeServiceProxy;
 
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
@@ -25,12 +26,14 @@ public class SecurityConfigAdapter {
 
 	AuthenticationManager authenticationManager;
 	SecurityContextRepository contextRepository;
+	EmployeeServiceProxy employeeServiceProxy;
 
 	@Autowired
 	public SecurityConfigAdapter(AuthenticationManager authenticationManager,
-			SecurityContextRepository contextRepository) {
+			SecurityContextRepository contextRepository, EmployeeServiceProxy employeeServiceProxy) {
 		this.authenticationManager = authenticationManager;
 		this.contextRepository = contextRepository;
+		this.employeeServiceProxy = employeeServiceProxy;
 	}
 	
     @Bean
@@ -47,6 +50,17 @@ public class SecurityConfigAdapter {
 		http.authorizeExchange().pathMatchers("/cvbank/employee/signup").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/auth/signin").permitAll();
 		http.authorizeExchange().pathMatchers("/cvbank/employee/feign/**").denyAll();
+		// =============================================== CV =================================================
+		http.authorizeExchange().pathMatchers(HttpMethod.POST, "/cvbank/cv").hasRole("EMPLOYEE");
+		http.authorizeExchange().pathMatchers(HttpMethod.POST, "/cvbank/cv/cvs").permitAll();
+		http.authorizeExchange().pathMatchers(HttpMethod.POST, "/cvbank/cv/cvs/aggregate").permitAll();
+		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/cv/{cvId}").permitAll();
+		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/cv/cvs/published").hasRole("EMPLOYER");
+		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/cv/anonymizer/{cvId}").access(this::checkCVAuthority);
+		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/cv/{cvId}").access(this::checkCVAuthority);
+		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/cv/publish/{cvId}").access(this::checkCVAuthority);
+		http.authorizeExchange().pathMatchers(HttpMethod.DELETE, "/cvbank/cv/{cvId}").access(this::checkCVAuthority);
+		// ============================================= EMPLOYEE ===========================================
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/login").hasRole("EMPLOYEE");
 		http.authorizeExchange().pathMatchers(HttpMethod.PUT, "/cvbank/employee/pass").hasRole("EMPLOYEE");
 		http.authorizeExchange().pathMatchers(HttpMethod.GET, "/cvbank/employee/{id}").permitAll();
@@ -56,6 +70,14 @@ public class SecurityConfigAdapter {
 		return http.build();
 	}
 
+	private Mono<AuthorizationDecision> checkCVAuthority(Mono<Authentication> authentication,
+			AuthorizationContext context) {
+		return authentication
+				.map(a -> employeeServiceProxy.getEmployeeById(a.getName()).share().block()
+						.getCv_id().contains(context.getVariables().get("cvId")))
+				.map(granted -> new AuthorizationDecision(granted));
+	}
+
 	private Mono<AuthorizationDecision> currentUserMatchesPath(Mono<Authentication> authentication,
 			AuthorizationContext context) {
 		LOG.trace("requests variables", context.getVariables());
@@ -63,5 +85,7 @@ public class SecurityConfigAdapter {
 				.map(a -> context.getVariables().get("id").equals(a.getName()))
 				.map(granted -> new AuthorizationDecision(granted));
 	}
+	
+	
 
 }
